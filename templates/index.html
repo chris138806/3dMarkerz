@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3DMarkerz - Caricamento STL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-600 to-purple-700 min-h-screen flex flex-col items-center justify-start pt-10 text-white">
+
+    <!-- Titolo e Descrizione -->
+    <header class="text-center mb-6 animate-fadeIn">
+        <img src="/static/images/logo.png" alt="3DMarkerz Logo" class="mx-auto w-72 md:w-96">
+        <p class="text-lg mt-2 opacity-90 text-center max-w-lg leading-relaxed">
+            Benvenuto su <strong>3D Markerz!</strong> Forniamo un servizio di stampa e spedizione a prezzi contenuti.<br>
+            Carica il tuo file STL, imposta i parametri di stampa e ricevi entro 24H il preventivo!
+        </p>
+    </header>
+
+    <!-- Contenitore Principale -->
+    <div class="bg-white shadow-2xl rounded-2xl p-8 max-w-lg w-full text-gray-900 animate-scaleIn">
+        <form id="uploadForm" enctype="multipart/form-data" action="/upload" method="POST">
+            
+            <!-- Caricamento File -->
+            <div class="border-2 border-dashed border-gray-400 rounded-lg p-6 bg-gray-100 text-center transition duration-300 hover:bg-gray-200">
+                <label class="cursor-pointer">
+                    <span id="upload-text" class="block text-lg font-semibold text-gray-700">Carica file STL</span>
+                    <input type="file" id="file" name="file" accept=".stl" required class="hidden">
+                    <p id="file-name" class="mt-2 text-gray-700 hidden"></p>
+                </label>
+            </div>
+
+            <!-- Selezione Tipo di Stampa -->
+            <div class="mt-4 text-center">
+                <p class="text-lg font-semibold text-gray-800">Seleziona il tipo di stampa:</p>
+                <div class="flex justify-center gap-6 mt-2">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="radio" name="print_type" value="resina" id="resina">
+                        <span>Resina</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="radio" name="print_type" value="filo" id="filo">
+                        <span>Filo</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Opzioni per la Stampa in Resina -->
+            <div id="resina-options" class="hidden mt-4 transition-opacity duration-500 ease-in-out">
+                <label class="block text-sm font-semibold text-gray-800">Colore Resina</label>
+                <select id="resina_color" name="resina_color" class="w-full p-2 bg-gray-200 rounded">
+                    <option value="trasparente">Trasparente</option>
+                    <option value="grigio">Grigio</option>
+                    <option value="nero">Nero</option>
+                </select>
+
+                <label class="block text-sm font-semibold text-gray-800 mt-2">Riempimento Resina</label>
+                <select id="resina_infill" name="resina_infill" class="w-full p-2 bg-gray-200 rounded">
+                    <option value="20%">20%</option>
+                    <option value="50%">50%</option>
+                    <option value="100%">100%</option>
+                </select>
+            </div>
+
+            <!-- Opzioni per la Stampa a Filo -->
+            <div id="filo-options" class="hidden mt-4 space-y-2 transition-opacity duration-500 ease-in-out">
+                <label class="block text-sm font-semibold text-gray-800">Materiale</label>
+                <select id="filo_material" name="filo_material" class="w-full p-2 bg-gray-200 rounded">
+                    <option value="pla">PLA</option>
+                    <option value="petg">PETG</option>
+                    <option value="tpu">TPU</option>
+                </select>
+
+                <label class="block text-sm font-semibold text-gray-800">Qualità di stampa</label>
+                <select id="filo_quality" name="filo_quality" class="w-full p-2 bg-gray-200 rounded">
+                    <option value="standard">Standard Quality 0.2</option>
+                    <option value="dynamic">Dynamic Quality 0.16</option>
+                    <option value="super">Super Quality 0.12</option>
+                </select>
+
+                <label class="block text-sm font-semibold text-gray-800">Colore</label>
+                <select id="filo_color" name="filo_color" class="w-full p-2 bg-gray-200 rounded">
+                    <option value="bianco">Bianco Brillante</option>
+                    <option value="nero-opaco">Nero Opaco</option>
+                    <option value="nero-lucido">Nero Lucido</option>
+                    <option value="oro">Oro</option>
+                    <option value="argento">Argento</option>
+                    <option value="bronzo">Bronzo</option>
+                </select>
+
+                <label class="block text-sm font-semibold text-gray-800">Riempimento</label>
+                <select id="filo_infill" name="filo_infill" class="w-full p-2 bg-gray-200 rounded">
+                    <option value="20%">20%</option>
+                    <option value="40%">40%</option>
+                    <option value="60%">60%</option>
+                    <option value="80%">80%</option>
+                    <option value="100%">100%</option>
+                </select>
+            </div>
+
+            <button type="submit" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 p-3 rounded text-white font-bold shadow-md transition-transform transform hover:scale-105">
+                Carica File
+            </button>
+        </form>
+
+        <p id="statusMessage" class="text-center mt-4 text-sm text-gray-700"></p>
+    </div>
+
+    <script src="/static/script.js"></script>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 text-sm mt-12 w-full">
+        <div class="max-w-6xl mx-auto px-6 py-10 grid md:grid-cols-3 gap-8 text-center md:text-left">
+            <!-- Informazioni Aziendali -->
+            <div>
+                <h4 class="text-white font-semibold text-lg mb-2">3DMarkerz</h4>
+                <p>Servizio di stampa 3D su richiesta.</p>
+                <p>Via Dante Alighieri 10B, 20844 Triuggio, Italia</p>
+                <p>P.IVA: 12345678901</p>
+                <p>Tel: +39 3339857177</p>
+                <p>Email: info@3dmarkerz.it</p>
+            </div>
+
+            <!-- Link Utili -->
+            <div>
+                <h4 class="text-white font-semibold text-lg mb-2">Link Utili</h4>
+                <ul class="space-y-1">
+                    <li><a href="/" class="hover:text-white">Home</a></li>
+                    <li><a href="{{ url_for('contatti') }}" class="hover:text-white">Contatti</a></li>
+                    <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-white">Termini e Condizioni</a></li>
+                </ul>
+            </div>
+
+            <!-- Credits e Copyright -->
+            <div>
+                <h4 class="text-white font-semibold text-lg mb-2">Legal</h4>
+                <p>Questo sito è conforme al GDPR.</p>
+                <p>I dati raccolti saranno usati esclusivamente per finalità di contatto e preventivo.</p>
+                <p>&copy; 2025 3DMarkerz. Tutti i diritti riservati.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

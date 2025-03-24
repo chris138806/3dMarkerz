@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contatti - 3DMarkerz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-600 to-purple-700 min-h-screen flex flex-col items-center justify-start pt-10 text-white">
+
+    <!-- Titolo -->
+    <header class="text-center mb-6 animate-fadeIn">
+        <img src="/static/images/logo.png" alt="3DMarkerz Logo" class="mx-auto w-72 md:w-96">
+        <h1 class="text-3xl font-bold mt-4">Contattaci</h1>
+        <p class="mt-2 text-lg opacity-90">Hai bisogno di assistenza o vuoi maggiori informazioni? Compila il modulo qui sotto.</p>
+    </header>
+
+    <!-- Modulo Contatti -->
+    <div class="bg-white shadow-2xl rounded-2xl p-8 max-w-lg w-full text-gray-900 animate-scaleIn">
+        <form action="/send-contact" method="POST" class="space-y-4">
+            <div>
+                <label class="block text-sm font-semibold">Nome e Cognome</label>
+                <input type="text" name="name" required class="w-full p-2 bg-gray-200 rounded" placeholder="Mario Rossi">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold">Email</label>
+                <input type="email" name="email" required class="w-full p-2 bg-gray-200 rounded" placeholder="esempio@email.com">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold">Messaggio</label>
+                <textarea name="message" rows="5" required class="w-full p-2 bg-gray-200 rounded" placeholder="Scrivi qui il tuo messaggio..."></textarea>
+            </div>
+            <button type="submit" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 p-3 rounded text-white font-bold shadow-md transition-transform transform hover:scale-105">
+                Invia Messaggio
+            </button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 text-sm mt-12 w-full">
+        <div class="max-w-6xl mx-auto px-6 py-10 grid md:grid-cols-3 gap-8 text-center md:text-left">
+            <!-- Informazioni Aziendali -->
+            <div>
+                <h4 class="text-white font-semibold text-lg mb-2">3DMarkerz</h4>
+                <p>Servizio di stampa 3D su richiesta.</p>
+                <p>Via Dante Alighieri 10B, 20844 Triuggio, Italia</p>
+                <p>P.IVA: 12345678901</p>
+                <p>Tel: +39 3339857177</p>
+                <p>Email: info@3dmarkerz.it</p>
+            </div>
+
+            <!-- Link Utili -->
+            <div>
+                <h4 class="text-white font-semibold text-lg mb-2">Link Utili</h4>
+                <ul class="space-y-1">
+                    <li><a href="/" class="hover:text-white">Home</a></li>
+                    <li><a href="{{ url_for('contatti') }}" class="hover:text-white">Contatti</a></li>
+                    <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-white">Termini e Condizioni</a></li>
+                </ul>
+            </div>
+
+            <!-- Credits e Copyright -->
+            <div>
+                <h4 class="text-white font-semibold text-lg mb-2">Legal</h4>
+                <p>Questo sito è conforme al GDPR.</p>
+                <p>I dati raccolti saranno usati esclusivamente per finalità di contatto e preventivo.</p>
+                <p>&copy; 2025 3DMarkerz. Tutti i diritti riservati.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

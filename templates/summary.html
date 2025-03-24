@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riepilogo - 3DMarkerz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Librerie per Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+
+</head>
+<body class="bg-gradient-to-r from-blue-600 to-purple-700 min-h-screen flex flex-col items-center justify-start pt-10 text-white">
+
+    <!-- Logo -->
+    <header class="text-center mb-6 animate-fadeIn">
+        <img src="/static/images/logo.png" alt="3DMarkerz Logo" class="mx-auto w-72 md:w-96">
+    </header>
+
+    <!-- Riepilogo Scelte -->
+    <div class="bg-white shadow-2xl rounded-2xl p-8 max-w-lg w-full text-gray-900 animate-scaleIn">
+        <h2 class="text-xl font-bold">Riepilogo della richiesta</h2>
+        <p><strong>File caricato:</strong> {{ filename }}</p>
+
+        <!-- Contenitore per l'anteprima STL -->
+        <div id="stl-container" class="border border-gray-300 rounded-lg mt-4" style="width: 100%; height: 400px;"></div>
+
+        <p><strong>Tipo di stampa:</strong> {{ print_type }}</p>
+        {% if print_type == "resina" %}
+            <p><strong>Colore Resina:</strong> {{ resina_color }}</p>
+            <p><strong>Riempimento:</strong> {{ resina_infill }}</p>
+        {% else %}
+            <p><strong>Materiale:</strong> {{ filo_material }}</p>
+            <p><strong>Qualità:</strong> {{ filo_quality }}</p>
+            <p><strong>Colore:</strong> {{ filo_color }}</p>
+            <p><strong>Riempimento:</strong> {{ filo_infill }}</p>
+        {% endif %}
+
+        <!-- Form per Email e Note -->
+        <form id="requestForm" action="/send-email" method="POST">
+            <input type="hidden" name="filename" value="{{ filename }}">
+            <input type="hidden" name="print_type" value="{{ print_type }}">
+            <input type="hidden" name="resina_color" value="{{ resina_color }}">
+            <input type="hidden" name="resina_infill" value="{{ resina_infill }}">
+            <input type="hidden" name="filo_material" value="{{ filo_material }}">
+            <input type="hidden" name="filo_quality" value="{{ filo_quality }}">
+            <input type="hidden" name="filo_color" value="{{ filo_color }}">
+            <input type="hidden" name="filo_infill" value="{{ filo_infill }}">
+
+            <label class="block mt-4">Inserisci la tua email:</label>
+            <input type="email" name="email" required class="w-full p-2 bg-gray-200 rounded" placeholder="esempio@email.com">
+
+            <label class="block mt-4">Note aggiuntive:</label>
+            <textarea name="notes" class="w-full p-2 bg-gray-200 rounded" placeholder="Inserisci eventuali note (opzionale)"></textarea>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded text-white font-bold shadow-md transition-transform transform hover:scale-105">
+                Richiedi Preventivo
+            </button>
+        </form>
+    </div>
+
+    <!-- Script per il rendering STL con Three.js -->
+    <script>
+       document.addEventListener("DOMContentLoaded", function () {
+            const container = document.getElementById("stl-container");
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // Aggiunta delle luci
+            const light = new THREE.AmbientLight(0xffffff, 1);
+            scene.add(light);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(1, 1, 1).normalize();
+            scene.add(directionalLight);
+
+            const loader = new THREE.STLLoader();
+            loader.load("{{ url_for('uploaded_file', filename=filename) }}", function (geometry) {
+                const material = new THREE.MeshStandardMaterial({ color: 0x007bff, metalness: 0.5, roughness: 0.2 });
+                const mesh = new THREE.Mesh(geometry, material);
+                scene.add(mesh);
+
+                // Calcolo bounding box per centrare il modello
+                const boundingBox = new THREE.Box3().setFromObject(mesh);
+                const center = boundingBox.getCenter(new THREE.Vector3());
+                const size = boundingBox.getSize(new THREE.Vector3()).length();
+
+                mesh.position.sub(center); // Centra il modello
+                camera.position.set(0, 0, size * 0.7); // Allontana la camera
+
+                // Abilita zoom e rotazione con il mouse
+                const controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true; 
+                controls.dampingFactor = 0.05;
+                controls.screenSpacePanning = false;
+                controls.minDistance = size * 0.1; // Distanza minima di zoom
+                controls.maxDistance = size * 5; // Distanza massima di zoom
+
+                function animate() {
+                    requestAnimationFrame(animate);
+                    controls.update(); // Aggiorna i controlli per il movimento con il mouse
+                    renderer.render(scene, camera);
+                }
+                animate();
+            });
+
+            // Resize dinamico
+            window.addEventListener("resize", () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+        });
+        
+    </script>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 text-sm mt-12 w-full">
+        <div class="max-w-6xl mx-auto px-6 py-10 grid md:grid-cols-3 gap-8 text-center md:text-left">
+            <!-- Informazioni Aziendali -->
+            <div>
+                <h4 class="text-white font-semibold text-lg mb-2">3DMarkerz</h4>
+                <p>Servizio di stampa 3D su richiesta.</p>
+                <p>Via Dante Alighieri 10B, 20844 Triuggio, Italia</p>
+                <p>P.IVA: 12345678901</p>
+                <p>Tel: +39 3339857177</p>
+                <p>Email: info@3dmarkerz.it</p>
+            </div>
+
+            <!-- Link Utili -->
+            <div>
+                <h4 class="text-white font-semibold text-lg mb-2">Link Utili</h4>
+                <ul class="space-y-1">
+                    <li><a href="/" class="hover:text-white">Home</a></li>
+                    <li><a href="{{ url_for('contatti') }}" class="hover:text-white">Contatti</a></li>
+                    <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-white">Termini e Condizioni</a></li>
+                </ul>
+            </div>
+
+            <!-- Credits e Copyright -->
+            <div>
+                <h4 class="text-white font-semibold text-lg mb-2">Legal</h4>
+                <p>Questo sito è conforme al GDPR.</p>
+                <p>I dati raccolti saranno usati esclusivamente per finalità di contatto e preventivo.</p>
+                <p>&copy; 2025 3DMarkerz. Tutti i diritti riservati.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
