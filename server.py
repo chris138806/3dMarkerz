@@ -109,10 +109,11 @@ def send_contact():
             smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             smtp.send_message(msg)
 
-        return render_template("contatti.html", success=True)
+        return "Messaggio inviato con successo!"
     except Exception as e:
         print(f"Errore invio email contatto: {e}")
-        return render_template("contatti.html", error=True)
+        return "Errore durante l'invio del messaggio."
+
 
 
 
