@@ -3,10 +3,11 @@ import os
 import smtplib
 from email.message import EmailMessage
 
-EMAIL_ADDRESS = "spallone.christian@gmail.com"           # <-- inserisci qui il tuo indirizzo Gmail
-EMAIL_PASSWORD = "tkxv ucsu dozc roai"  # <-- inserisci qui la password per app Gmail
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
+# Configurazione email per Register.it
+EMAIL_ADDRESS = "preventivi@3dmarkerz.it"  # Email mittente su Register.it
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")  # Password sicura da variabile ambiente
+SMTP_SERVER = "authsmtp.securemail.pro"
+SMTP_PORT = 465  # Porta SSL
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
@@ -72,7 +73,6 @@ def send_email():
     filename = request.form["filename"]
     file_path = os.path.join(UPLOAD_FOLDER, filename)
 
-    # Recupera altri dati di stampa dal form
     print_type = request.form.get("print_type", "N/A")
     resina_color = request.form.get("resina_color", "N/A")
     resina_infill = request.form.get("resina_infill", "N/A")
@@ -81,7 +81,6 @@ def send_email():
     filo_color = request.form.get("filo_color", "N/A")
     filo_infill = request.form.get("filo_infill", "N/A")
 
-    # Crea il link diretto al file
     file_url = url_for('uploaded_file', filename=filename, _external=True)
 
     messaggio = f"""
@@ -107,9 +106,7 @@ Nuova richiesta di preventivo:
         msg["To"] = "info@3dmarkerz.it"
         msg.set_content(messaggio)
 
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:
-            smtp.ehlo()
-            smtp.starttls()
+        with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as smtp:
             smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             smtp.send_message(msg)
 
