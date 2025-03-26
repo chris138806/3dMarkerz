@@ -17,6 +17,11 @@
 
     <!-- Modulo Contatti -->
     <div class="bg-white shadow-2xl rounded-2xl p-8 max-w-lg w-full text-gray-900 animate-scaleIn">
+        {% if success %}
+            <div class="bg-green-100 text-green-800 p-3 rounded mb-4">Messaggio inviato con successo!</div>
+        {% elif error %}
+            <div class="bg-red-100 text-red-800 p-3 rounded mb-4">Errore durante l'invio del messaggio.</div>
+        {% endif %}
         <form action="/send-contact" method="POST" class="space-y-4">
             <div>
                 <label class="block text-sm font-semibold">Nome e Cognome</label>

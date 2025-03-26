@@ -90,6 +90,31 @@ def summary():
 def contatti():
     return render_template("contatti.html")
 
+@app.route("/send-contact", methods=["POST"])
+def send_contact():
+    name = request.form["name"]
+    email = request.form["email"]
+    message = request.form["message"]
+
+    msg_body = f"Messaggio da: {name}\nEmail: {email}\n\nMessaggio:\n{message}"
+
+    try:
+        msg = EmailMessage()
+        msg["Subject"] = "Nuovo messaggio da pagina contatti"
+        msg["From"] = EMAIL_ADDRESS
+        msg["To"] = "info@3dmarkerz.it"
+        msg.set_content(msg_body)
+
+        with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as smtp:
+            smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            smtp.send_message(msg)
+
+        return render_template("contatti.html", success=True)
+    except Exception as e:
+        print(f"Errore invio email contatto: {e}")
+        return render_template("contatti.html", error=True)
+
+
 @app.route("/upload", methods=["POST"])
 def upload():
     if "file" not in request.files:
