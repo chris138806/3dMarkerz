@@ -4,8 +4,8 @@ import smtplib
 from email.message import EmailMessage
 from functools import wraps
 
-EMAIL_ADDRESS = "preventivi@3dmarkerz.it"
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+EMAIL_ADDRESS = "contatti@3dmarkerz.it"
+EMAIL_PASSWORD = os.getenv("EMAILC_PASSWORD")
 SMTP_SERVER = "authsmtp.securemail.pro"
 SMTP_PORT = 465
 
@@ -100,7 +100,7 @@ def send_contact():
 
     try:
         msg = EmailMessage()
-        msg["Subject"] = "Nuovo messaggio da pagina contatti"
+        msg["Subject"] = "Richiesta informazioni"
         msg["From"] = EMAIL_ADDRESS
         msg["To"] = "info@3dmarkerz.it"
         msg.set_content(msg_body)
