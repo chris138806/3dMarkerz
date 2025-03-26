@@ -9,6 +9,23 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
 </head>
+
+<script>
+    // Mostra il banner solo se non è ancora stata fatta una scelta
+    window.addEventListener("DOMContentLoaded", () => {
+      const preference = localStorage.getItem("cookie_preference");
+      if (!preference) {
+        document.getElementById("cookie-banner").classList.remove("hidden");
+      }
+    });
+  
+    // Salva la preferenza e nasconde il banner
+    function setCookiePreference(choice) {
+      localStorage.setItem("cookie_preference", choice);
+      document.getElementById("cookie-banner").classList.add("hidden");
+    }
+</script>
+  
 <body class="bg-gradient-to-r from-blue-600 to-purple-700 min-h-screen flex flex-col items-center justify-start pt-10 text-white">
 
     <!-- Logo -->
@@ -138,6 +155,88 @@
         });
     </script>
     
+    <!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contatti - 3DMarkerz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-r from-blue-600 to-purple-700 min-h-screen flex flex-col items-center justify-start pt-10 text-white">
+
+    <!-- Titolo -->
+    <header class="text-center mb-6 animate-fadeIn">
+        <img src="/static/images/logo.png" alt="3DMarkerz Logo" class="mx-auto w-72 md:w-96">
+        <h1 class="text-3xl font-bold mt-4">Contattaci</h1>
+        <p class="mt-2 text-lg opacity-90">Hai bisogno di assistenza o vuoi maggiori informazioni? Compila il modulo qui sotto.</p>
+    </header>
+
+    <!-- Modulo Contatti -->
+    <div class="bg-white shadow-2xl rounded-2xl p-8 max-w-lg w-full text-gray-900 animate-scaleIn">
+        <form id="contactForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-semibold">Nome e Cognome</label>
+                <input type="text" name="name" required class="w-full p-2 bg-gray-200 rounded" placeholder="Mario Rossi">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold">Email</label>
+                <input type="email" name="email" required class="w-full p-2 bg-gray-200 rounded" placeholder="esempio@email.com">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold">Messaggio</label>
+                <textarea name="message" rows="5" required class="w-full p-2 bg-gray-200 rounded" placeholder="Scrivi qui il tuo messaggio..."></textarea>
+            </div>
+            <button type="submit" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 p-3 rounded text-white font-bold shadow-md transition-transform transform hover:scale-105">
+                Invia Messaggio
+            </button>
+        </form>
+    </div>
+
+    <!-- Dialog conferma / errore -->
+    <dialog id="feedbackDialog" class="rounded-lg p-6 shadow-lg text-black w-full max-w-md">
+        <p id="dialogMessage"></p>
+        <div class="text-right mt-4">
+            <button onclick="document.getElementById('feedbackDialog').close()" class="bg-blue-600 text-white px-4 py-2 rounded">OK</button>
+        </div>
+    </dialog>
+
+    <!-- Dialog Privacy Policy -->
+    <dialog id="privacyDialog" class="rounded-lg p-6 shadow-lg text-black w-full max-w-2xl max-h-screen overflow-y-auto">
+        <h2 class="text-xl font-bold mb-4">Privacy e Policy</h2>
+        <div class="text-sm space-y-2">
+            <p><strong>Titolare del trattamento:</strong> 3DMarkerz - Via Dante Alighieri 10B, 20844 Triuggio, Italia</p>
+            <p><strong>Dati raccolti:</strong> Email, nome, file caricati, informazioni sul tipo di stampa e messaggi di contatto.</p>
+            <p><strong>Finalità:</strong> Fornire preventivi, rispondere a richieste, gestire gli ordini e rispettare obblighi legali.</p>
+            <p><strong>Base giuridica:</strong> Consenso dell’interessato e obblighi contrattuali.</p>
+            <p><strong>Conservazione dati:</strong> I dati vengono conservati per il tempo necessario a fornire il servizio richiesto e per adempiere agli obblighi fiscali.</p>
+            <p><strong>Diritti dell’utente:</strong> Accesso, rettifica, cancellazione, limitazione, opposizione, portabilità, reclamo all’autorità garante.</p>
+            <p><strong>Destinatari:</strong> I dati non vengono venduti o condivisi, eccetto quando richiesto per obblighi legali o servizi tecnici (es. invio email, hosting).</p>
+            <p><strong>Sicurezza:</strong> I dati vengono protetti mediante misure tecniche e organizzative adeguate.</p>
+        </div>
+        <div class="text-right mt-4">
+            <button onclick="document.getElementById('privacyDialog').close()" class="bg-blue-600 text-white px-4 py-2 rounded">Chiudi</button>
+        </div>
+    </dialog>
+
+    <!-- Dialog Termini e Condizioni -->
+    <dialog id="termsDialog" class="rounded-lg p-6 shadow-lg text-black w-full max-w-2xl max-h-screen overflow-y-auto">
+        <h2 class="text-xl font-bold mb-4">Termini e Condizioni</h2>
+        <div class="text-sm space-y-2">
+            <p><strong>1. Oggetto:</strong> Le presenti condizioni regolano l’uso del sito 3DMarkerz.it e dei servizi di stampa 3D offerti.</p>
+            <p><strong>2. Servizio:</strong> Il sito consente agli utenti di caricare file 3D, richiedere preventivi e ricevere stampe personalizzate.</p>
+            <p><strong>3. Responsabilità:</strong> L’utente è responsabile dei contenuti caricati. 3DMarkerz non stampa oggetti illegali, offensivi o protetti da copyright senza autorizzazione.</p>
+            <p><strong>4. Prezzi:</strong> I prezzi dei servizi vengono forniti tramite preventivo basato sul file caricato e sulle opzioni selezionate.</p>
+            <p><strong>5. Pagamenti:</strong> I pagamenti sono richiesti solo dopo conferma del preventivo, tramite i metodi indicati (es. PayPal).</p>
+            <p><strong>6. Spedizioni:</strong> I tempi e le modalità di consegna sono indicati durante il processo di preventivo. Le spedizioni avvengono tramite corrieri selezionati.</p>
+            <p><strong>7. Recesso:</strong> Trattandosi di prodotti personalizzati, il diritto di recesso non si applica, salvo difetti o errori imputabili a 3DMarkerz.</p>
+            <p><strong>8. Legge applicabile:</strong> I presenti termini sono regolati dalla legge italiana. In caso di controversie, è competente il foro di Monza.</p>
+        </div>
+        <div class="text-right mt-4">
+            <button onclick="document.getElementById('termsDialog').close()" class="bg-blue-600 text-white px-4 py-2 rounded">Chiudi</button>
+        </div>
+    </dialog>
+
     <!-- Footer -->
     <footer class="bg-gray-900 text-gray-300 text-sm mt-12 w-full">
         <div class="max-w-6xl mx-auto px-6 py-10 grid md:grid-cols-3 gap-8 text-center md:text-left">
@@ -156,9 +255,9 @@
                 <h4 class="text-white font-semibold text-lg mb-2">Link Utili</h4>
                 <ul class="space-y-1">
                     <li><a href="/" class="hover:text-white">Home</a></li>
-                    <li><a href="{{ url_for('contatti') }}" class="hover:text-white">Contatti</a></li>
-                    <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
-                    <li><a href="#" class="hover:text-white">Termini e Condizioni</a></li>
+                    <li><a href="/contatti" class="hover:text-white">Contatti</a></li>
+                    <li><button onclick="document.getElementById('privacyDialog').showModal()" class="hover:text-white">Privacy Policy</button></li>
+                    <li><button onclick="document.getElementById('termsDialog').showModal()" class="hover:text-white">Termini e Condizioni</button></li>
                 </ul>
             </div>
 
@@ -172,5 +271,40 @@
         </div>
     </footer>
 
+    <script>
+        const form = document.getElementById("contactForm");
+        const dialog = document.getElementById("feedbackDialog");
+        const dialogMessage = document.getElementById("dialogMessage");
+
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            try {
+                const response = await fetch("/send-contact", {
+                    method: "POST",
+                    body: formData
+                });
+                const result = await response.text();
+                dialogMessage.textContent = result;
+            } catch (error) {
+                dialogMessage.textContent = "Errore durante l'invio del messaggio.";
+            }
+            dialog.showModal();
+        });
+    </script>
+
+    <!-- Cookie Banner GDPR -->
+    <div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-gray-900 text-white p-4 shadow-lg z-50 hidden">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 md:space-x-4">
+        <p class="text-sm">
+            Questo sito utilizza cookie tecnici essenziali per garantire il corretto funzionamento. Nessun cookie sarà installato senza il tuo consenso.
+        </p>
+        <div class="flex space-x-2">
+            <button onclick="setCookiePreference('rejected')" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm">Rifiuta tutti</button>
+            <button onclick="setCookiePreference('essential')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm">Accetta essenziali</button>
+        </div>
+        </div>
+    </div>
+  
 </body>
 </html>
