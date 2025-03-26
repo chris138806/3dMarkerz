@@ -115,6 +115,7 @@ def send_contact():
         return render_template("contatti.html", error=True)
 
 
+
 @app.route("/upload", methods=["POST"])
 def upload():
     if "file" not in request.files:
