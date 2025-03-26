@@ -15,7 +15,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.secret_key = "supersegreto"  # Cambia con qualcosa di sicuro
 
 ADMIN_USERNAME = "superuser"
-ADMIN_PASSWORD = os.getenv("SUPERUSER_PASSWORD")
+ADMIN_PASSWORD = os.getenv("SUPER_PASSWORD")
 
 # Autenticazione admin
 
