@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Riepilogo - 3DMarkerz</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Librerie per Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
-
 </head>
 <body class="bg-gradient-to-r from-blue-600 to-purple-700 min-h-screen flex flex-col items-center justify-start pt-10 text-white">
 
@@ -23,7 +21,6 @@
         <h2 class="text-xl font-bold">Riepilogo della richiesta</h2>
         <p><strong>File caricato:</strong> {{ filename }}</p>
 
-        <!-- Contenitore per l'anteprima STL -->
         <div id="stl-container" class="border border-gray-300 rounded-lg mt-4" style="width: 100%; height: 400px;"></div>
 
         <p><strong>Tipo di stampa:</strong> {{ print_type }}</p>
@@ -37,7 +34,6 @@
             <p><strong>Riempimento:</strong> {{ filo_infill }}</p>
         {% endif %}
 
-        <!-- Form per Email e Note -->
         <form id="requestForm" action="/send-email" method="POST">
             <input type="hidden" name="filename" value="{{ filename }}">
             <input type="hidden" name="print_type" value="{{ print_type }}">
@@ -60,18 +56,23 @@
         </form>
     </div>
 
-    <!-- Script per il rendering STL con Three.js -->
-    <script>
-       document.addEventListener("DOMContentLoaded", function () {
-            const container = document.getElementById("stl-container");
+    <dialog id="emailDialog" class="rounded-xl p-4 max-w-md w-full shadow-xl">
+        <p id="dialogMessage" class="text-center text-black font-medium"></p>
+        <div class="text-center mt-4">
+            <button onclick="document.getElementById('emailDialog').close()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Chiudi</button>
+        </div>
+    </dialog>
 
+    <!-- Script STL Rendering -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const container = document.getElementById("stl-container");
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
             container.appendChild(renderer.domElement);
 
-            // Aggiunta delle luci
             const light = new THREE.AmbientLight(0xffffff, 1);
             scene.add(light);
 
@@ -85,38 +86,56 @@
                 const mesh = new THREE.Mesh(geometry, material);
                 scene.add(mesh);
 
-                // Calcolo bounding box per centrare il modello
                 const boundingBox = new THREE.Box3().setFromObject(mesh);
                 const center = boundingBox.getCenter(new THREE.Vector3());
                 const size = boundingBox.getSize(new THREE.Vector3()).length();
+                mesh.position.sub(center);
+                camera.position.set(0, 0, size * 0.7);
 
-                mesh.position.sub(center); // Centra il modello
-                camera.position.set(0, 0, size * 0.7); // Allontana la camera
-
-                // Abilita zoom e rotazione con il mouse
                 const controls = new THREE.OrbitControls(camera, renderer.domElement);
-                controls.enableDamping = true; 
+                controls.enableDamping = true;
                 controls.dampingFactor = 0.05;
-                controls.screenSpacePanning = false;
-                controls.minDistance = size * 0.1; // Distanza minima di zoom
-                controls.maxDistance = size * 5; // Distanza massima di zoom
+                controls.minDistance = size * 0.1;
+                controls.maxDistance = size * 5;
 
                 function animate() {
                     requestAnimationFrame(animate);
-                    controls.update(); // Aggiorna i controlli per il movimento con il mouse
+                    controls.update();
                     renderer.render(scene, camera);
                 }
                 animate();
             });
 
-            // Resize dinamico
             window.addEventListener("resize", () => {
                 camera.aspect = container.clientWidth / container.clientHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(container.clientWidth, container.clientHeight);
             });
         });
-        
+
+        document.getElementById("requestForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+
+            fetch("/send-email", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(text => {
+                const dialog = document.getElementById("emailDialog");
+                const msg = document.getElementById("dialogMessage");
+                msg.textContent = text;
+                dialog.showModal();
+            })
+            .catch(error => {
+                const dialog = document.getElementById("emailDialog");
+                const msg = document.getElementById("dialogMessage");
+                msg.textContent = "Errore durante l'invio dell'email.";
+                dialog.showModal();
+            });
+        });
     </script>
     
     <!-- Footer -->
