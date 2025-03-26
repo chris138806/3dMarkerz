@@ -17,12 +17,7 @@
 
     <!-- Modulo Contatti -->
     <div class="bg-white shadow-2xl rounded-2xl p-8 max-w-lg w-full text-gray-900 animate-scaleIn">
-        {% if success %}
-            <div class="bg-green-100 text-green-800 p-3 rounded mb-4">Messaggio inviato con successo!</div>
-        {% elif error %}
-            <div class="bg-red-100 text-red-800 p-3 rounded mb-4">Errore durante l'invio del messaggio.</div>
-        {% endif %}
-        <form action="/send-contact" method="POST" class="space-y-4">
+        <form id="contactForm" class="space-y-4">
             <div>
                 <label class="block text-sm font-semibold">Nome e Cognome</label>
                 <input type="text" name="name" required class="w-full p-2 bg-gray-200 rounded" placeholder="Mario Rossi">
@@ -40,6 +35,14 @@
             </button>
         </form>
     </div>
+
+    <!-- Dialog conferma / errore -->
+    <dialog id="feedbackDialog" class="rounded-lg p-6 shadow-lg text-black w-full max-w-md">
+        <p id="dialogMessage"></p>
+        <div class="text-right mt-4">
+            <button onclick="document.getElementById('feedbackDialog').close()" class="bg-blue-600 text-white px-4 py-2 rounded">OK</button>
+        </div>
+    </dialog>
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-gray-300 text-sm mt-12 w-full">
@@ -74,6 +77,31 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        const form = document.getElementById("contactForm");
+        const dialog = document.getElementById("feedbackDialog");
+        const dialogMessage = document.getElementById("dialogMessage");
+
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch("/send-contact", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const result = await response.text();
+                dialogMessage.textContent = result;
+            } catch (error) {
+                dialogMessage.textContent = "Errore durante l'invio del messaggio.";
+            }
+
+            dialog.showModal();
+        });
+    </script>
 
 </body>
 </html>
