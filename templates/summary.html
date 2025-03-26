@@ -258,6 +258,8 @@
                     <li><a href="/contatti" class="hover:text-white">Contatti</a></li>
                     <li><button onclick="document.getElementById('privacyDialog').showModal()" class="hover:text-white">Privacy Policy</button></li>
                     <li><button onclick="document.getElementById('termsDialog').showModal()" class="hover:text-white">Termini e Condizioni</button></li>
+                    <li><button onclick="openCookieSettings()" class="hover:text-white">Gestisci Cookie</button></li>
+
                 </ul>
             </div>
 
@@ -293,18 +295,79 @@
         });
     </script>
 
-    <!-- Cookie Banner GDPR -->
-    <div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-gray-900 text-white p-4 shadow-lg z-50 hidden">
-        <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 md:space-x-4">
-        <p class="text-sm">
-            Questo sito utilizza cookie tecnici essenziali per garantire il corretto funzionamento. Nessun cookie sarà installato senza il tuo consenso.
-        </p>
-        <div class="flex space-x-2">
-            <button onclick="setCookiePreference('rejected')" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm">Rifiuta tutti</button>
-            <button onclick="setCookiePreference('essential')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm">Accetta essenziali</button>
-        </div>
-        </div>
+    <!-- Banner Cookie GDPR con gestione categorie -->
+<div id="cookie-banner" class="fixed bottom-0 left-0 w-full bg-gray-900 text-white p-4 shadow-lg z-50 hidden">
+    <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 md:space-x-4">
+      <p class="text-sm">
+        Usiamo cookie per garantire funzionalità essenziali e migliorare l’esperienza utente. Puoi scegliere cosa accettare.
+      </p>
+      <div class="flex space-x-2">
+        <button onclick="openCookieSettings()" class="bg-gray-700 hover:bg-gray-800 px-4 py-2 rounded text-sm">Gestisci preferenze</button>
+        <button onclick="setCookiePreference('rejected')" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-sm">Rifiuta tutti</button>
+        <button onclick="setCookiePreference('essential')" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm">Accetta essenziali</button>
+      </div>
     </div>
+  </div>
+  
+  <!-- Dialog gestione cookie avanzata -->
+  <dialog id="cookieSettingsDialog" class="rounded-lg p-6 shadow-lg text-black w-full max-w-lg">
+    <h3 class="text-lg font-bold mb-4">Gestione preferenze cookie</h3>
+    <form id="cookie-settings-form" class="space-y-3">
+      <div>
+        <label><input type="checkbox" disabled checked> Cookie essenziali (sempre attivi)</label>
+      </div>
+      <div>
+        <label><input type="checkbox" name="statistics"> Cookie statistici</label>
+      </div>
+      <div>
+        <label><input type="checkbox" name="marketing"> Cookie di marketing</label>
+      </div>
+      <div class="flex justify-end space-x-2 pt-4">
+        <button type="button" onclick="document.getElementById('cookieSettingsDialog').close()" class="bg-gray-300 px-4 py-2 rounded">Annulla</button>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Salva preferenze</button>
+      </div>
+    </form>
+  </dialog>
+  
+  <script>
+    function openCookieSettings() {
+      document.getElementById("cookieSettingsDialog").showModal();
+    }
+  
+    function setCookiePreference(choice) {
+      const preferences = { essential: true, statistics: false, marketing: false };
+  
+      if (choice === "essential") {
+        preferences.statistics = false;
+        preferences.marketing = false;
+      } else if (choice === "rejected") {
+        preferences.essential = false;
+      }
+  
+      localStorage.setItem("cookie_preference", JSON.stringify(preferences));
+      document.getElementById("cookie-banner").classList.add("hidden");
+    }
+  
+    // Salva preferenze avanzate dal dialog
+    document.getElementById("cookie-settings-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const stats = this.statistics.checked;
+      const marketing = this.marketing.checked;
+      const preferences = { essential: true, statistics: stats, marketing: marketing };
+      localStorage.setItem("cookie_preference", JSON.stringify(preferences));
+      document.getElementById("cookieSettingsDialog").close();
+      document.getElementById("cookie-banner").classList.add("hidden");
+    });
+  
+    // Mostra il banner se non è già salvata una scelta
+    window.addEventListener("DOMContentLoaded", () => {
+      const preference = localStorage.getItem("cookie_preference");
+      if (!preference) {
+        document.getElementById("cookie-banner").classList.remove("hidden");
+      }
+    });
+  </script>
+  
   
 </body>
 </html>

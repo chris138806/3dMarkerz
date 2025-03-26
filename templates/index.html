@@ -125,44 +125,6 @@
 
     <script src="/static/script.js"></script>
 
-    <!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contatti - 3DMarkerz</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gradient-to-r from-blue-600 to-purple-700 min-h-screen flex flex-col items-center justify-start pt-10 text-white">
-
-    <!-- Titolo -->
-    <header class="text-center mb-6 animate-fadeIn">
-        <img src="/static/images/logo.png" alt="3DMarkerz Logo" class="mx-auto w-72 md:w-96">
-        <h1 class="text-3xl font-bold mt-4">Contattaci</h1>
-        <p class="mt-2 text-lg opacity-90">Hai bisogno di assistenza o vuoi maggiori informazioni? Compila il modulo qui sotto.</p>
-    </header>
-
-    <!-- Modulo Contatti -->
-    <div class="bg-white shadow-2xl rounded-2xl p-8 max-w-lg w-full text-gray-900 animate-scaleIn">
-        <form id="contactForm" class="space-y-4">
-            <div>
-                <label class="block text-sm font-semibold">Nome e Cognome</label>
-                <input type="text" name="name" required class="w-full p-2 bg-gray-200 rounded" placeholder="Mario Rossi">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold">Email</label>
-                <input type="email" name="email" required class="w-full p-2 bg-gray-200 rounded" placeholder="esempio@email.com">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold">Messaggio</label>
-                <textarea name="message" rows="5" required class="w-full p-2 bg-gray-200 rounded" placeholder="Scrivi qui il tuo messaggio..."></textarea>
-            </div>
-            <button type="submit" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 p-3 rounded text-white font-bold shadow-md transition-transform transform hover:scale-105">
-                Invia Messaggio
-            </button>
-        </form>
-    </div>
-
     <!-- Dialog conferma / errore -->
     <dialog id="feedbackDialog" class="rounded-lg p-6 shadow-lg text-black w-full max-w-md">
         <p id="dialogMessage"></p>
