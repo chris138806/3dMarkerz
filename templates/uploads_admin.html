@@ -2,15 +2,39 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Uploads Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Uploads - 3DMarkerz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h2>File nella cartella uploads</h2>
-    <ul>
-        {% for file in files %}
-            <li><a href="{{ url_for('uploaded_file', filename=file) }}" target="_blank">{{ file }}</a></li>
-        {% endfor %}
-    </ul>
-    <a href="{{ url_for('logout') }}">Logout</a>
+<body class="bg-gradient-to-r from-blue-600 to-purple-700 min-h-screen text-white flex flex-col items-center pt-10">
+
+    <!-- Header -->
+    <header class="text-center mb-6">
+        <img src="/static/images/logo.png" alt="3DMarkerz Logo" class="mx-auto w-72 md:w-96">
+        <h1 class="text-2xl font-bold mt-4">Gestione File Caricati</h1>
+    </header>
+
+    <!-- Container dei file -->
+    <div class="bg-white shadow-2xl rounded-2xl p-6 max-w-3xl w-full text-gray-900">
+        {% if files %}
+            <ul class="space-y-4">
+                {% for file in files %}
+                <li class="flex justify-between items-center border-b pb-2">
+                    <span class="font-medium">{{ file }}</span>
+                    <div class="space-x-2">
+                        <a href="{{ url_for('uploaded_file', filename=file) }}" class="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded shadow">Scarica</a>
+                        <form action="{{ url_for('delete_file') }}" method="post" class="inline">
+                            <input type="hidden" name="filename" value="{{ file }}">
+                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded shadow">Elimina</button>
+                        </form>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-center text-gray-700">Nessun file presente nella cartella uploads.</p>
+        {% endif %}
+    </div>
+
 </body>
 </html>
