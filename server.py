@@ -1,19 +1,61 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, session
 import os
 import smtplib
 from email.message import EmailMessage
+from functools import wraps
 
-# Configurazione email per Register.it
-EMAIL_ADDRESS = "preventivi@3dmarkerz.it"  # Email mittente su Register.it
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")  # Password sicura da variabile ambiente
+EMAIL_ADDRESS = "preventivi@3dmarkerz.it"
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 SMTP_SERVER = "authsmtp.securemail.pro"
-SMTP_PORT = 465  # Porta SSL
+SMTP_PORT = 465
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.secret_key = "supersegreto"  # Cambia con qualcosa di sicuro
 
-# Permetti a Flask di servire i file STL
+ADMIN_USERNAME = "superuser"
+ADMIN_PASSWORD = os.getenv("SUPERUSER_PASSWORD")
+
+# Autenticazione admin
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get("logged_in"):
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        if request.form["username"] == ADMIN_USERNAME and request.form["password"] == ADMIN_PASSWORD:
+            session["logged_in"] = True
+            return redirect(url_for("admin_uploads"))
+        else:
+            return "Credenziali non valide", 401
+    return render_template("login.html")
+
+@app.route("/logout")
+def logout():
+    session.pop("logged_in", None)
+    return redirect(url_for("login"))
+
+# Pagina amministratore per vedere e gestire i file
+@app.route("/uploads-admin", methods=["GET", "POST"])
+@login_required
+def admin_uploads():
+    if request.method == "POST":
+        filename = request.form.get("filename")
+        if filename:
+            try:
+                os.remove(os.path.join(UPLOAD_FOLDER, filename))
+            except Exception as e:
+                return f"Errore eliminazione file: {e}"
+    files = os.listdir(UPLOAD_FOLDER)
+    return render_template("uploads_admin.html", files=files)
+
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
