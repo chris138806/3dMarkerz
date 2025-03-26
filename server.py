@@ -43,18 +43,22 @@ def logout():
     return redirect(url_for("login"))
 
 # Pagina amministratore per vedere e gestire i file
-@app.route("/uploads-admin", methods=["GET", "POST"])
+@app.route("/uploads-admin", methods=["GET"])
 @login_required
 def admin_uploads():
-    if request.method == "POST":
-        filename = request.form.get("filename")
-        if filename:
-            try:
-                os.remove(os.path.join(UPLOAD_FOLDER, filename))
-            except Exception as e:
-                return f"Errore eliminazione file: {e}"
     files = os.listdir(UPLOAD_FOLDER)
     return render_template("uploads_admin.html", files=files)
+
+@app.route("/delete-file", methods=["POST"])
+@login_required
+def delete_file():
+    filename = request.form.get("filename")
+    if filename:
+        try:
+            os.remove(os.path.join(UPLOAD_FOLDER, filename))
+        except Exception as e:
+            return f"Errore eliminazione file: {e}"
+    return redirect(url_for("admin_uploads"))
 
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
